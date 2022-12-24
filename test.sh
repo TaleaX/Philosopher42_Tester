@@ -34,6 +34,7 @@ perc_correct_die () {
         else
             printf "${OK_COLOR}Yay${NO_COLOR}\t"
             printf "${OK_COLOR}[✓]${NO_COLOR}\n"
+            (( count_correct++ ))
         fi
     done
     perc=$(awk -v count="$count_correct" -v tests="$test_amount" 'BEGIN {print 100 / tests * count}')
@@ -54,6 +55,7 @@ perc_correct_live () {
         else
             printf "${OK_COLOR}Yay${NO_COLOR}\t"
             printf "${OK_COLOR}[✓]${NO_COLOR}\n"
+            (( count_correct++ ))
         fi
     done
     perc=$(awk -v count="$count_correct" -v tests="$test_amount" 'BEGIN {print 100 / tests * count}')
