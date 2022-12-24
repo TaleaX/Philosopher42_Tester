@@ -2,6 +2,16 @@
 perc=0
 test_amount=20
 
+COM_COLOR="\033[0;34m"
+OBJ_COLOR="\033[0;36m"
+OK_COLOR="\033[0;32m"
+ERROR_COLOR="\033[0;31m"
+WARN_COLOR="\033[0;33m"
+NO_COLOR="\033[0m"
+
+printf "\e[1;1H\e[2J"
+printf "\n${COM_COLOR}Philo Tester${NO_COLOR}\t$(date +%Y/%m/%d)\n\n"
+
 if [ "$#" -gt 1 ]; then
 	printf "Invalid input!\n"
 	exit
@@ -17,12 +27,12 @@ perc_correct_die () {
         lines=$(./philo $1 $2 $3 $4 $5 > test && cat test | grep died)
         exit_status=$(echo $?)
         if (( $exit_status ==  1 )) ; then
-            printf "${ERROR_COLOR}Damn${NO_COLOR} $lines\t"
+            printf "${ERROR_COLOR}Damn${NO_COLOR}\t"
             printf "${ERROR_COLOR}[x]${NO_COLOR}\n"
             break
             (( count_false++ ))
         else
-            printf "${OK_COLOR}Yay${NO_COLOR} $lines\t"
+            printf "${OK_COLOR}Yay${NO_COLOR}\t"
             printf "${OK_COLOR}[✓]${NO_COLOR}\n"
         fi
     done
@@ -37,12 +47,12 @@ perc_correct_live () {
         lines=$(./philo $1 $2 $3 $4 $5 > test && cat test | grep died)
         exit_status=$(echo $?)
         if (( $exit_status == 0 )) ; then
-            printf "${ERROR_COLOR}Damn${NO_COLOR} $lines\t"
+            printf "${ERROR_COLOR}Damn${NO_COLOR}\t"
             printf "${ERROR_COLOR}[x]${NO_COLOR}\n"
             break
             (( count_false++ ))
         else
-            printf "${OK_COLOR}Yay${NO_COLOR} $lines\t"
+            printf "${OK_COLOR}Yay${NO_COLOR}\t"
             printf "${OK_COLOR}[✓]${NO_COLOR}\n"
         fi
     done
