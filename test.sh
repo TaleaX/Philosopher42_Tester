@@ -9,7 +9,7 @@ perc_correct_die () {
     for (( i=0; i < $test_amount; i++))  ; do
         lines=$(./philo $1 $2 $3 $4 $5 > test && cat test | grep died)
         exit_status=$(echo $?)
-        if (( $exit_status == 0 )) ; then
+        if (( $exit_status ==  1 )) ; then
             echo Damn $lines
             break
             (( count_false++ ))
@@ -27,7 +27,7 @@ perc_correct_live () {
     for (( i=0; i < $test_amount; i++)) ; do
         lines=$(./philo $1 $2 $3 $4 $5 > test && cat test | grep died)
         exit_status=$(echo $?)
-        if (( $lines == 1 )) ; then
+        if (( $exit_status == 0 )) ; then
             echo Damn $lines
             break
             (( count_false++ ))
