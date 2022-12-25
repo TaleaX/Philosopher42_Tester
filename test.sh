@@ -2,7 +2,7 @@
 perc=0
 test_amount=10
 times_to_eat=10
-error_file=.error
+error_folder=fails
 
 B_ERROR_COLOR="\e[1;31m"
 B_OK_COLOR="\e[1;32m"
@@ -25,10 +25,25 @@ RESET="\033[0m"
 #printf "\e[2K" -- clear the entire line
 #printf "r" -- carriage return -- go to beginning of the line + start overwriting the line
 
-if [ -d $error_file ]; then
-    rm -rf $error_file; 
+if [ -d $error_folder ]; then
+    rm -rf $error_folder; 
 fi
-mkdir $error_file
+mkdir $error_folder
+
+if [ "$#" -gt 1 ]; then
+	printf "Invalid input!\n"
+	exit
+elif [ "$#" -lt 1 ]; then
+	philo=../philo
+else
+    philo=$1
+fi
+
+if ! command ${philo} 5 200 100 100 &> /dev/null; then
+    clear
+    printf "Couldn't execute \"${philo}\"!\n"
+    exit 1
+fi
 
 print_loading_bar () {
     printf "LOADING\t"
@@ -59,11 +74,11 @@ perc_correct_die () {
     printf "\t${BH_MAGENTA}$1 $2 $3 $4 $5 ${RESET}\n"
    #printf "\t\t\t\tLOADING\t"
     for (( i=1; i <= $test_amount; i++))  ; do
-        ./philo $1 $2 $3 $4 $5 > output && cat output | grep died
+        $philo $1 $2 $3 $4 $5 > output && cat output | grep died
         exit_status=$(echo $?)
         if (( $exit_status == 1 )) ; then
             printf "\e[2K \r${RESET}$i\t${B_ERROR_COLOR}Fail\t[x]${RESET}\t\t"
-            echo "--------------- $1 $2 $3 $4 $5 --------------------" >> $error_file/$1_$2_$3_$4_$5_$i && cat output >> $error_file/$1_$2_$3_$4_$5_$i
+            cat output > $error_folder/$1_$2_$3_$4_$5_$i
             (( count_false++ ))
         else
             printf "\033[s\033[1A\033[1;32m"
@@ -83,12 +98,12 @@ perc_correct_live () {
     printf "\t${BH_MAGENTA}$1 $2 $3 $4 $5 ${RESET}\n"
     #printf "\t\t\t\tLOADING\t"
     for (( i=1; i <= $test_amount; i++)) ; do
-        ./philo $1 $2 $3 $4 $5 > output && cat output | grep died
+        $philo $1 $2 $3 $4 $5 > output && cat output | grep died
         exit_status=$(echo $?)
         if (( $exit_status == 0 )) ; then
             printf "\033[s\033[1A\033[1;32m"
             printf "\e[2K \r${RESET}$i\t${B_ERROR_COLOR}Fail\t[x]${RESET}\t\t"
-            echo "--------------- $1 $2 $3 $4 $5 --------------------" >> $error_file/$1_$2_$3_$4_$5_$i && cat output >> $error_file/$1_$2_$3_$4_$5_$i
+            cat output > $error_folder/$1_$2_$3_$4_$5_$i
             (( count_false++ ))
         else
             printf "\e[2K \r$i\t${B_OK_COLOR}Pass\t[✓]${RESET}\t\t"
@@ -256,7 +271,6 @@ tests () {
         7)
             clear
             own_test
-            exit 0
             ;;
 		$'\e')
 			exit 0
@@ -271,3 +285,11 @@ tests () {
 
 tests
 rm output
+
+if [ -z "$(ls -A fails)" ]; then
+   rm -rf fails
+fi
+
+if [ -d "fails" ]; then
+    ./visualizer.sh
+fi
