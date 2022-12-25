@@ -20,6 +20,10 @@ BH_CYAN="\e[1;96m"
 
 RESET="\033[0m"
 
+#printf "\033[s\033[7A\033[1;32m" -- move cursor up seven line
+#printf "\033[s\033[7B\033[1;32m" -- move cursor down seven line
+#printf "\e[2K" -- clear the entire line
+#printf "r" -- carriage return -- go to beginning of the line + start overwriting the line
 
 if [ -d $error_file ]; then
     rm -rf $error_file; 
@@ -27,9 +31,14 @@ fi
 mkdir $error_file
 
 print_loading_bar () {
-    if (( $1 != 100 && $1 % 5 == 0 )) ; then
-        printf "${BH_OK_COLOR}#${RESET}"
-    fi
+    printf "LOADING\t"
+    for (( x=0; x <= $1; x+=10)) ; do
+    {
+        if (( $1 % 10 == 0 )) ; then
+            printf "${BH_OK_COLOR}#${RESET}"
+        fi
+    }
+    done
 }
 
 print_perc () {
@@ -47,19 +56,21 @@ perc_correct_die () {
     count_false=0
     count_correct=0
     loading_bar_count=0
-    printf "${BH_MAGENTA}$1 $2 $3 $4 $5 ${RESET}\n"
-    printf "LOADING\t"
-    for (( i=0; i < $test_amount; i++))  ; do
+    printf "\t${BH_MAGENTA}$1 $2 $3 $4 $5 ${RESET}\n"
+   #printf "\t\t\t\tLOADING\t"
+    for (( i=1; i <= $test_amount; i++))  ; do
         line=$(./philo $1 $2 $3 $4 $5 > output && cat output | grep died)
         exit_status=$(echo $?)
         if (( $exit_status == 1 )) ; then
-            echo "--------------- $1 $2 $3 $4 $5 --------------------" >> $error_file/"$1_$2_$3_$4_$5_$i" && cat output >> $error_file/"$1_$2_$3_$4_$5_$i"
+            printf "\e[2K \r$i\t${B_ERROR_COLOR}Fail\t[x]${RESET}\t\t"
+            echo "--------------- $1 $2 $3 $4 $5 --------------------" >> $error_file/$1_$2_$3_$4_$5_$i && cat output >> $error_file/$1_$2_$3_$4_$5_$i
             (( count_false++ ))
         else
+            printf "\e[2K \r$i\t${B_OK_COLOR}Pass\t[✓]${RESET}\t\t"
             (( count_correct++ ))
         fi
-        (( loading_bar_count++ ))
         print_loading_bar $(awk -v count="$loading_bar_count" -v tests="$test_amount" 'BEGIN {print 100 / tests * count}')
+        (( loading_bar_count++ ))
     done
     print_perc $(awk -v count="$count_correct" -v tests="$test_amount" 'BEGIN {print 100 / tests * count}')
 }
@@ -68,19 +79,21 @@ perc_correct_live () {
     count_false=0
     count_correct=0
     loading_bar_count=0
-    printf "${BH_MAGENTA}$1 $2 $3 $4 $5 ${RESET}\n"
-    printf "LOADING\t"
-    for (( i=0; i < $test_amount; i++)) ; do
+    printf "\t${BH_MAGENTA}$1 $2 $3 $4 $5 ${RESET}\n"
+    #printf "\t\t\t\tLOADING\t"
+    for (( i=1; i <= $test_amount; i++)) ; do
         line=$(./philo $1 $2 $3 $4 $5 > output && cat output | grep died)
         exit_status=$(echo $?)
         if (( $exit_status == 0 )) ; then
-            echo "--------------- $1 $2 $3 $4 $5 --------------------" >> $error_file/"$1_$2_$3_$4_$5_$i" && cat output >> $error_file/"$1_$2_$3_$4_$5_$i"
+            printf "\e[2K \r$i\t${B_ERROR_COLOR}Fail\t[x]${RESET}\t\t"
+            echo "--------------- $1 $2 $3 $4 $5 --------------------" >> $error_file/$1_$2_$3_$4_$5_$i && cat output >> $error_file/$1_$2_$3_$4_$5_$i
             (( count_false++ ))
         else
+            printf "\e[2K \r$i\t${B_OK_COLOR}Pass\t[✓]${RESET}\t\t"
             (( count_correct++ ))
         fi
-        (( loading_bar_count++ ))
         print_loading_bar $(awk -v count="$loading_bar_count" -v tests="$test_amount" 'BEGIN {print 100 / tests * count}')
+        (( loading_bar_count++ ))
     done
     print_perc $(awk -v count="$count_correct" -v tests="$test_amount" 'BEGIN {print 100 / tests * count}')
 }
@@ -101,9 +114,9 @@ even_live () {
 
 even_die () {
     printf "\n${B_CYAN}Testing even numbers - one should die${RESET}\n\n"
-    perc_correct_die 3 599 200 200 $time_to_eat
+    perc_correct_die 3 599 200 200 $times_to_eat
     perc_correct_die 31 599 200 200 $times_to_eat
-    perc_correct_die 131 596 200 200 $time_to_eat
+    perc_correct_die 131 596 200 200 $times_to_eat
 }
 
 uneven_die () {
