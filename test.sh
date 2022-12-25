@@ -90,28 +90,28 @@ perc_correct_live () {
 }
 
 uneven_live () {
-    printf "\n${B_CYAN}Testing uneven numbers - they shouldn't die${RESET}\n"
+    printf "\n${B_CYAN}Testing uneven numbers - they shouldn't die${RESET}\n\n"
     perc_correct_live 5 800 200 200 $times_to_eat
     perc_correct_live 5 610 200 200 $times_to_eat
     perc_correct_live 199 610 200 200 $times_to_eat
 }
 
 even_live () {
-    printf "\n${B_CYAN}Testing even numbers - they shouldn't die${RESET}\n"
+    printf "\n${B_CYAN}Testing even numbers - they shouldn't die${RESET}\n\n"
     perc_correct_live 4 410 200 200 $times_to_eat
     perc_correct_live 198 610 200 200 $times_to_eat
     perc_correct_live 198 800 200 200 $times_to_eat
 }
 
 even_die () {
-    printf "\n${B_CYAN}Testing even numbers - one should die${RESET}\n"
+    printf "\n${B_CYAN}Testing even numbers - one should die${RESET}\n\n"
     perc_correct_die 3 599 200 200 $time_to_eat
     perc_correct_die 31 599 200 200 $times_to_eat
     perc_correct_die 131 596 200 200 $time_to_eat
 }
 
 uneven_die () {
-    printf "\n${B_CYAN}Testing uneven numbers - one should die${RESET}\n"
+    printf "\n${B_CYAN}Testing uneven numbers - one should die${RESET}\n\n"
     perc_correct_die 4 310 200 100 $times_to_eat
     perc_correct_die 1 800 200 100 $times_to_eat
 }
