@@ -59,13 +59,14 @@ perc_correct_die () {
     printf "\t${BH_MAGENTA}$1 $2 $3 $4 $5 ${RESET}\n"
    #printf "\t\t\t\tLOADING\t"
     for (( i=1; i <= $test_amount; i++))  ; do
-        line=$(./philo $1 $2 $3 $4 $5 > output && cat output | grep died)
+        ./philo $1 $2 $3 $4 $5 > output && cat output | grep died
         exit_status=$(echo $?)
         if (( $exit_status == 1 )) ; then
-            printf "\e[2K \r$i\t${B_ERROR_COLOR}Fail\t[x]${RESET}\t\t"
+            printf "\e[2K \r${RESET}$i\t${B_ERROR_COLOR}Fail\t[x]${RESET}\t\t"
             echo "--------------- $1 $2 $3 $4 $5 --------------------" >> $error_file/$1_$2_$3_$4_$5_$i && cat output >> $error_file/$1_$2_$3_$4_$5_$i
             (( count_false++ ))
         else
+            printf "\033[s\033[1A\033[1;32m"
             printf "\e[2K \r$i\t${B_OK_COLOR}Pass\t[✓]${RESET}\t\t"
             (( count_correct++ ))
         fi
@@ -82,10 +83,11 @@ perc_correct_live () {
     printf "\t${BH_MAGENTA}$1 $2 $3 $4 $5 ${RESET}\n"
     #printf "\t\t\t\tLOADING\t"
     for (( i=1; i <= $test_amount; i++)) ; do
-        line=$(./philo $1 $2 $3 $4 $5 > output && cat output | grep died)
+        ./philo $1 $2 $3 $4 $5 > output && cat output | grep died
         exit_status=$(echo $?)
         if (( $exit_status == 0 )) ; then
-            printf "\e[2K \r$i\t${B_ERROR_COLOR}Fail\t[x]${RESET}\t\t"
+            printf "\033[s\033[1A\033[1;32m"
+            printf "\e[2K \r${RESET}$i\t${B_ERROR_COLOR}Fail\t[x]${RESET}\t\t"
             echo "--------------- $1 $2 $3 $4 $5 --------------------" >> $error_file/$1_$2_$3_$4_$5_$i && cat output >> $error_file/$1_$2_$3_$4_$5_$i
             (( count_false++ ))
         else
@@ -101,28 +103,103 @@ perc_correct_live () {
 uneven_live () {
     printf "\n${B_CYAN}Testing uneven numbers - they shouldn't die${RESET}\n\n"
     perc_correct_live 5 800 200 200 $times_to_eat
+    perc_correct_live 5 610 200 100 $times_to_eat
     perc_correct_live 5 610 200 200 $times_to_eat
+    perc_correct_live 5 601 200 200 $times_to_eat
+
+    perc_correct_live 31 610 200 100 $times_to_eat
+    perc_correct_live 31 610 200 200 $times_to_eat
+    perc_correct_live 31 605 200 200 $times_to_eat
+    perc_correct_live 31 601 200 200 $times_to_eat
+
+    perc_correct_live 131 610 200 100 $times_to_eat
+    perc_correct_live 131 610 200 200 $times_to_eat
+    perc_correct_live 131 605 200 200 $times_to_eat
+    perc_correct_live 131 601 200 200 $times_to_eat
+
+    perc_correct_live 199 610 200 100 $times_to_eat
     perc_correct_live 199 610 200 200 $times_to_eat
+    perc_correct_live 199 605 200 200 $times_to_eat
+    perc_correct_live 199 601 200 200 $times_to_eat
 }
 
 even_live () {
     printf "\n${B_CYAN}Testing even numbers - they shouldn't die${RESET}\n\n"
+    perc_correct_live 4 410 200 100 $times_to_eat
     perc_correct_live 4 410 200 200 $times_to_eat
-    perc_correct_live 198 610 200 200 $times_to_eat
-    perc_correct_live 198 800 200 200 $times_to_eat
-}
 
-even_die () {
-    printf "\n${B_CYAN}Testing even numbers - one should die${RESET}\n\n"
-    perc_correct_die 3 599 200 200 $times_to_eat
-    perc_correct_die 31 599 200 200 $times_to_eat
-    perc_correct_die 131 596 200 200 $times_to_eat
+    perc_correct_live 50 410 200 100 $times_to_eat
+    perc_correct_live 50 410 200 200 $times_to_eat
+    perc_correct_live 50 405 200 200 $times_to_eat
+    perc_correct_live 50 401 200 200 $times_to_eat
+
+    perc_correct_live 130 410 200 100 $times_to_eat
+    perc_correct_live 130 410 200 200 $times_to_eat
+    perc_correct_live 130 405 200 200 $times_to_eat
+    perc_correct_live 130 401 200 200 $times_to_eat
+    
+    perc_correct_live 198 410 200 100 $times_to_eat
+    perc_correct_live 198 410 200 200 $times_to_eat
+    perc_correct_live 198 405 200 200 $times_to_eat
+    perc_correct_live 198 401 200 200 $times_to_eat
 }
 
 uneven_die () {
     printf "\n${B_CYAN}Testing uneven numbers - one should die${RESET}\n\n"
-    perc_correct_die 4 310 200 100 $times_to_eat
+    perc_correct_die 3 596 200 200 $times_to_eat
+    perc_correct_die 3 599 200 200 $times_to_eat
+    perc_correct_die 3 600 200 200 $times_to_eat
+
+    perc_correct_die 31 596 200 200 $times_to_eat
+    perc_correct_die 31 599 200 200 $times_to_eat
+    perc_correct_die 31 600 200 200 $times_to_eat
+
+    perc_correct_die 131 596 200 200 $times_to_eat
+    perc_correct_die 131 599 200 200 $times_to_eat
+    perc_correct_die 131 600 200 200 $times_to_eat
+
+    erc_correct_die 199 596 200 200 $times_to_eat
+    perc_correct_die 199 599 200 200 $times_to_eat
+    perc_correct_die 199 600 200 200 $times_to_eat
+
     perc_correct_die 1 800 200 100 $times_to_eat
+}
+
+even_die () {
+    printf "\n${B_CYAN}Testing even numbers - one should die${RESET}\n\n"
+    perc_correct_die 4 310 200 100 $times_to_eat
+
+    perc_correct_die 50 396 200 200 $times_to_eat
+    perc_correct_die 50 399 200 200 $times_to_eat
+    perc_correct_die 50 400 200 200 $times_to_eat
+
+    perc_correct_die 130 396 200 200 $times_to_eat
+    perc_correct_die 130 399 200 200 $times_to_eat
+    perc_correct_die 130 400 200 200 $times_to_eat
+
+    erc_correct_die 198 396 200 200 $times_to_eat
+    perc_correct_die 198 399 200 200 $times_to_eat
+    perc_correct_die 198 400 200 200 $times_to_eat
+}
+
+own_test () {
+    read -r -p $'\n\nNumber_of_philosophers:' n_philos
+    printf "\n$n_philos"
+    read -r -p $'\n\nTime_to_die:' time_to_die
+    printf "\n$n_philos $time_to_die"
+    read -r -p $'\n\nTime_to_eat:' time_to_eat
+    printf "\n$n_philos $time_to_die $time_to_eat"
+    read -r -p $'\n\nTime_to_sleep:' time_to_sleep
+    printf "\n$n_philos $time_to_die $time_to_eat $time_to_sleep"
+    read -r -p $'\n\nNumber_of_times_each_philosopher_must_eat:' number_of_times_each_philosopher_must_eat
+    printf "\n$n_philos $time_to_die $time_to_eat $time_to_sleep $number_of_times_each_philosopher_must_eat"
+    read -r -n 1 -p $'\n\nShould die?\t[0]\nShouldn\'t die?\t[1]\n' should_die
+    clear
+    if [ $should_die -eq 0 ]; then
+        perc_correct_die $n_philos $time_to_die $time_to_eat $time_to_sleep $number_of_times_each_philosopher_must_eat
+    else
+        perc_correct_live $n_philos $time_to_die $time_to_eat $time_to_sleep $number_of_times_each_philosopher_must_eat
+    fi
 }
 
 text () {
@@ -135,6 +212,7 @@ text () {
     printf "Uneven numbers that should die\t\t[4]\n"
     printf "Even numbers that should die\t\t[5]\n"
     printf "${B_MAGENTA}All numbers that should die\t\t[6]${RESET}\n\n"
+    printf "${PURPLE}Own tests\t\t\t\t[7]${RESET}\n\n"
 }
 
 tests () {
@@ -175,6 +253,11 @@ tests () {
             uneven_die
 			even_die
 			;;
+        7)
+            clear
+            own_test
+            exit 0
+            ;;
 		$'\e')
 			exit 0
 			;;
