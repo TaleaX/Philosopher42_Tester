@@ -27,9 +27,7 @@ fi
 mkdir $error_file
 
 print_loading_bar () {
-    if (( $1 == 1 )) ; then
-        printf "LOADING\t"
-    elif (( $2 != 100 && $2 % 5 == 0 )) ; then
+    if (( $1 != 100 && $1 % 5 == 0 )) ; then
         printf "${BH_OK_COLOR}#${RESET}"
     fi
 }
@@ -49,8 +47,8 @@ perc_correct_die () {
     count_false=0
     count_correct=0
     loading_bar_count=0
-    print_bar=1
     printf "${BH_MAGENTA}$1 $2 $3 $4 $5 ${RESET}\n"
+    printf "LOADING\t"
     for (( i=0; i < $test_amount; i++))  ; do
         line=$(./philo $1 $2 $3 $4 $5 > output && cat output | grep died)
         exit_status=$(echo $?)
@@ -61,8 +59,7 @@ perc_correct_die () {
             (( count_correct++ ))
         fi
         (( loading_bar_count++ ))
-        print_loading_bar $print_bar $(awk -v count="$loading_bar_count" -v tests="$test_amount" 'BEGIN {print 100 / tests * count}')
-        print_bar=0
+        print_loading_bar $(awk -v count="$loading_bar_count" -v tests="$test_amount" 'BEGIN {print 100 / tests * count}')
     done
     print_perc $(awk -v count="$count_correct" -v tests="$test_amount" 'BEGIN {print 100 / tests * count}')
 }
@@ -71,8 +68,8 @@ perc_correct_live () {
     count_false=0
     count_correct=0
     loading_bar_count=0
-    print_bar=1
     printf "${BH_MAGENTA}$1 $2 $3 $4 $5 ${RESET}\n"
+    printf "LOADING\t"
     for (( i=0; i < $test_amount; i++)) ; do
         line=$(./philo $1 $2 $3 $4 $5 > output && cat output | grep died)
         exit_status=$(echo $?)
@@ -83,8 +80,7 @@ perc_correct_live () {
             (( count_correct++ ))
         fi
         (( loading_bar_count++ ))
-        print_loading_bar $print_bar $(awk -v count="$loading_bar_count" -v tests="$test_amount" 'BEGIN {print 100 / tests * count}')
-        print_bar=0
+        print_loading_bar $(awk -v count="$loading_bar_count" -v tests="$test_amount" 'BEGIN {print 100 / tests * count}')
     done
     print_perc $(awk -v count="$count_correct" -v tests="$test_amount" 'BEGIN {print 100 / tests * count}')
 }
@@ -178,3 +174,4 @@ tests () {
 }
 
 tests
+rm output
